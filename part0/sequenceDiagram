@@ -30,3 +30,7 @@ sequenceDiagram
   deactivate server
 
   Note right of browser: The .json file contains the recently added new note.
+
+
+
+  // I've sent the incomplete exercises by mistake, please do not review it yet
