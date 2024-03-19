@@ -11,12 +11,12 @@ sequenceDiagram
 
   browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
   activate server
-  server-->>browser: HTML document
+  server->>browser: HTML document
   deactivate server
 
   browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
   activate server
-  server-->>browser: the css file
+  server->>browser: the css file
   deactivate server
 
   browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
@@ -31,6 +31,4 @@ sequenceDiagram
 
   Note right of browser: The .json file contains the recently added new note.
 
-
-
-  // I've sent the incomplete exercises by mistake, please do not review it yet
+  //! By mistake in the first commit I uploaded the exercise incomplete, but then I uploaded it finished. Review the 'completed' commit, please
