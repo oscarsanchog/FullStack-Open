@@ -1,0 +1,32 @@
+sequenceDiagram
+  participant browser
+  participant server
+
+  browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
+  activate server
+  server->>browser: redirects to GET https://studies.cs.helsinki.fi/exampleapp/notes
+  desactivate server
+
+  Note right of browser: When entering a new note from the browser, the server responds with a status 302, and causes it to be redirected to the URL with the location /exampleapp/notes
+
+  browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
+  activate server
+  server-->>browser: HTML document
+  deactivate server
+
+  browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+  activate server
+  server-->>browser: the css file
+  deactivate server
+
+  browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+  activate server
+  server->>browser: the JavaScript file
+  deactivate server
+
+  browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+  activate server
+  server->>browser: [{ "content": "wiiiiiiii", "date": "2024-03-18T20:33:12.892Z" }, ... ]
+  deactivate server
+
+  Note right of browser: The .json file contains the recently added new note.
