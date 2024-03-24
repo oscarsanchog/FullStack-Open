@@ -18,6 +18,7 @@ const App = () => {
     return randomValue
   }
   const votesArray = new Uint8Array(anecdotes.length)
+  
 
   const [selected, setSelected] = useState(getRandomValue())
   const [votes, setVotes] = useState(votesArray)
