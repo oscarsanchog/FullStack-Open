@@ -1,6 +1,5 @@
 const PersonForm = ({newPerson, handleOnChange, handleOnSubmit}) => (
     <form onSubmit={handleOnSubmit}>
-        
         <div>
           <label htmlFor='name'>Name: </label>
           <input value={newPerson.name} id='name' onChange={handleOnChange} />

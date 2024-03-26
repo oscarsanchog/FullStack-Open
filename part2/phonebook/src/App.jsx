@@ -1,17 +1,22 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import axios from 'axios'
+
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 },
-  ])
+  const [persons, setPersons] = useState([])
   const [newPerson, setNewPerson] = useState({ name: '', number: '' })
   const [newFilter, setNewFilter] = useState([])
+  
+  const getNotes = () => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then((response) => setPersons(response.data))
+  }
+
+  useEffect(getNotes, [])
 
   const handleOnChange = (event) => {
     setNewPerson({
@@ -24,12 +29,10 @@ const App = () => {
     event.preventDefault()
     const repeatedName = persons.find(({ name }) => name === newPerson.name)
 
-    if (repeatedName)
-      window.alert(`${newPerson.name} is already added to phonebook`)
-    else {
-      setPersons(persons.concat(newPerson))
-      setNewPerson({ name: '', number: '' })
-    }
+    repeatedName
+      ? window.alert(`${newPerson.name} is already added to phonebook`)
+      : (setPersons(persons.concat(newPerson)),
+        setNewPerson({ name: '', number: '' }))
   }
 
   const toPlainText = (text) =>
@@ -56,7 +59,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      
+
       <Filter handleFilter={handleFilter} newFilter={newFilter} />
 
       <h2>Add a new</h2>
