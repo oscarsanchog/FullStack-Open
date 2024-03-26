@@ -13,6 +13,17 @@ const App = () => {
     personsService.getAll().then((initialPersons) => setPersons(initialPersons))
   }
 
+  const deletePerson = (id) => () => {
+    const personToDelete = persons.find((person) => person.id === id)
+    window.confirm(`Are you sure about deleting ${personToDelete.name}?`) &&
+      personsService.deletePerson(id).then((deletedPerson) => {
+        const updatedPersons = persons.filter(
+          (person) => person.id !== deletedPerson.id
+        )
+        setPersons(updatedPersons)
+      })
+  }
+
   useEffect(getPersons, [])
 
   const handleOnChange = (event) => {
@@ -28,7 +39,7 @@ const App = () => {
 
     repeatedName
       ? window.alert(`${newPerson.name} is already added to phonebook`)
-      : personsService.postNote(newPerson).then((returnedPerson) => {
+      : personsService.postPerson(newPerson).then((returnedPerson) => {
           console.log(returnedPerson)
           setPersons(persons.concat(returnedPerson))
           setNewPerson({ name: '', number: '' })
@@ -62,7 +73,11 @@ const App = () => {
     <div>
       <h1>Phonebook</h1>
 
-      <Filter handleFilter={handleFilter} newFilter={newFilter} />
+      <Filter
+        handleFilter={handleFilter}
+        newFilter={newFilter}
+        deletePerson={deletePerson}
+      />
 
       <h2>Add a new</h2>
       <PersonForm
@@ -72,7 +87,7 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <Persons persons={persons} />
+      <Persons persons={persons} deletePerson={deletePerson} />
     </div>
   )
 }

@@ -3,9 +3,10 @@ const baseUrl = 'http://localhost:3001/persons'
 
 const getAll = () => axios.get(baseUrl).then((response) => response.data)
 
-const postNote = (newPersonObject) =>
+const postPerson = (newPersonObject) =>
   axios.post(baseUrl, newPersonObject).then((response) => response.data)
 
-  
-  
-export default { getAll, postNote }
+const deletePerson = (id) =>
+  axios.delete(`${baseUrl}/${id}`).then((response) => response.data)
+
+export default { getAll, postPerson, deletePerson }
