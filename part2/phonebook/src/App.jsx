@@ -2,21 +2,18 @@ import { useEffect, useState } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
-import axios from 'axios'
-
+import personsService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newPerson, setNewPerson] = useState({ name: '', number: '' })
   const [newFilter, setNewFilter] = useState([])
-  
-  const getNotes = () => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then((response) => setPersons(response.data))
+
+  const getPersons = () => {
+    personsService.getAll().then((initialPersons) => setPersons(initialPersons))
   }
 
-  useEffect(getNotes, [])
+  useEffect(getPersons, [])
 
   const handleOnChange = (event) => {
     setNewPerson({
@@ -31,8 +28,13 @@ const App = () => {
 
     repeatedName
       ? window.alert(`${newPerson.name} is already added to phonebook`)
-      : (setPersons(persons.concat(newPerson)),
-        setNewPerson({ name: '', number: '' }))
+      : personsService.postNote(newPerson).then((returnedPerson) => {
+          console.log(returnedPerson)
+          setPersons(persons.concat(returnedPerson))
+          setNewPerson({ name: '', number: '' })
+        })
+    /* setPersons(persons.concat(newPerson)),
+          setNewPerson({ name: '', number: '' }) */
   }
 
   const toPlainText = (text) =>
