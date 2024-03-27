@@ -15,6 +15,7 @@ const App = () => {
 
   const deletePerson = (id) => () => {
     const personToDelete = persons.find((person) => person.id === id)
+
     window.confirm(`Are you sure about deleting ${personToDelete.name}?`) &&
       personsService.deletePerson(id).then((deletedPerson) => {
         const updatedPersons = persons.filter(
@@ -35,17 +36,36 @@ const App = () => {
 
   const handleOnSubmit = (event) => {
     event.preventDefault()
-    const repeatedName = persons.find(({ name }) => name === newPerson.name)
 
-    repeatedName
-      ? window.alert(`${newPerson.name} is already added to phonebook`)
-      : personsService.postPerson(newPerson).then((returnedPerson) => {
-          console.log(returnedPerson)
-          setPersons(persons.concat(returnedPerson))
-          setNewPerson({ name: '', number: '' })
-        })
-    /* setPersons(persons.concat(newPerson)),
-          setNewPerson({ name: '', number: '' }) */
+    const repeatedPerson = persons.find(
+      (person) => person.name === newPerson.name
+    )
+
+    if (repeatedPerson) {
+      const confirmedChange = window.confirm(
+        `${newPerson.name} is already added to phonebook. Replace the old number with a new one?`
+      )
+      if (confirmedChange) {
+        const updatedPerson = {
+          ...repeatedPerson,
+          number: newPerson.number,
+        }
+        personsService
+          .putNumber(repeatedPerson.id, updatedPerson)
+          .then((response) => {
+            const updatedPersons = persons.map((person) =>
+              person.id !== repeatedPerson.id ? person : response
+            )
+            setPersons(updatedPersons)
+            setNewPerson({ name: '', number: '' })
+          })
+      }
+    } else {
+      personsService.postPerson(newPerson).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson))
+        setNewPerson({ name: '', number: '' })
+      })
+    }
   }
 
   const toPlainText = (text) =>

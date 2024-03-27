@@ -9,4 +9,7 @@ const postPerson = (newPersonObject) =>
 const deletePerson = (id) =>
   axios.delete(`${baseUrl}/${id}`).then((response) => response.data)
 
-export default { getAll, postPerson, deletePerson }
+const putNumber = (id, newObject) => 
+  axios.put(`${baseUrl}/${id}`, newObject).then(response => response.data)
+
+export default { getAll, postPerson, deletePerson, putNumber }
