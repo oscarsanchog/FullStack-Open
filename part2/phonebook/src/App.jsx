@@ -3,11 +3,13 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import personsService from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newPerson, setNewPerson] = useState({ name: '', number: '' })
   const [newFilter, setNewFilter] = useState([])
+  const [successMessage, setSuccessMessage] = useState(null)
 
   const getPersons = () => {
     personsService.getAll().then((initialPersons) => setPersons(initialPersons))
@@ -34,6 +36,13 @@ const App = () => {
     })
   }
 
+  const messageHandler = (message) => {
+    setSuccessMessage(message)
+    setTimeout(() => {
+      setSuccessMessage(null)
+    }, 5000)
+  }
+
   const handleOnSubmit = (event) => {
     event.preventDefault()
 
@@ -50,6 +59,7 @@ const App = () => {
           ...repeatedPerson,
           number: newPerson.number,
         }
+
         personsService
           .putNumber(repeatedPerson.id, updatedPerson)
           .then((response) => {
@@ -57,12 +67,14 @@ const App = () => {
               person.id !== repeatedPerson.id ? person : response
             )
             setPersons(updatedPersons)
+            messageHandler(`${updatedPerson.name}'s number has been updated to ${updatedPerson.number}`)
             setNewPerson({ name: '', number: '' })
           })
       }
     } else {
       personsService.postPerson(newPerson).then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson))
+        messageHandler(`${returnedPerson.name} has been added`)
         setNewPerson({ name: '', number: '' })
       })
     }
@@ -92,6 +104,8 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+
+      <Notification message={successMessage} />
 
       <Filter
         handleFilter={handleFilter}
