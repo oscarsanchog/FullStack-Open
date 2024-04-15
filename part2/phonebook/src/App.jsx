@@ -10,10 +10,13 @@ const App = () => {
   const [newPerson, setNewPerson] = useState({ name: '', number: '' })
   const [newFilter, setNewFilter] = useState([])
   const [successMessage, setSuccessMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const getPersons = () => {
     personsService.getAll().then((initialPersons) => setPersons(initialPersons))
   }
+
+  useEffect(getPersons, [])
 
   const deletePerson = (id) => () => {
     const personToDelete = persons.find((person) => person.id === id)
@@ -27,8 +30,6 @@ const App = () => {
       })
   }
 
-  useEffect(getPersons, [])
-
   const handleOnChange = (event) => {
     setNewPerson({
       ...newPerson,
@@ -36,11 +37,18 @@ const App = () => {
     })
   }
 
-  const messageHandler = (message) => {
-    setSuccessMessage(message)
-    setTimeout(() => {
-      setSuccessMessage(null)
-    }, 5000)
+  const messageHandler = (type, message) => {
+    if (type === 'success') {
+      setSuccessMessage(message)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    } else {
+      setErrorMessage(message)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
   }
 
   const handleOnSubmit = (event) => {
@@ -67,14 +75,24 @@ const App = () => {
               person.id !== repeatedPerson.id ? person : response
             )
             setPersons(updatedPersons)
-            messageHandler(`${updatedPerson.name}'s number has been updated to ${updatedPerson.number}`)
+            messageHandler(
+              'success',
+              `${updatedPerson.name}'s number has been updated to ${updatedPerson.number}`
+            )
             setNewPerson({ name: '', number: '' })
+          })
+          .catch((error) => {
+            console.error(error.response)
+            messageHandler(
+              'error',
+              `${newPerson.name} has been already been removed from server`
+            )
           })
       }
     } else {
       personsService.postPerson(newPerson).then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson))
-        messageHandler(`${returnedPerson.name} has been added`)
+        messageHandler('success', `${returnedPerson.name} has been added`)
         setNewPerson({ name: '', number: '' })
       })
     }
@@ -105,7 +123,7 @@ const App = () => {
     <div>
       <h1>Phonebook</h1>
 
-      <Notification message={successMessage} />
+      <Notification message={{ successMessage, errorMessage }} />
 
       <Filter
         handleFilter={handleFilter}
