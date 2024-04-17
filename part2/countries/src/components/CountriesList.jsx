@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Country from './Country'
 
+
 const toggle = false
 
 const CountriesList = ({ countries }) => {

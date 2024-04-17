@@ -4,16 +4,28 @@ import { useEffect } from 'react'
 import Filter from './components/Filter'
 import CountriesList from './components/CountriesList'
 import Country from './components/Country'
+import Weather from './components/Weather'
+
+//console.log('code',api)
 
 const App = () => {
   const [countries, setCountries] = useState([])
   const [filteredCountries, setFilteredCountries] = useState([])
+  const [weather, setWeather] = useState(null)
 
-  const getCountries = () => {
+  useEffect(() => {
     countriesService.getAll().then((countries) => setCountries(countries))
-  }
 
-  useEffect(getCountries, [])
+    filteredCountries.length === 1 &&
+      countriesService
+        .getWeather(
+          filteredCountries[0].latlng[0],
+          filteredCountries[0].latlng[1]
+        )
+        .then((weather) => setWeather(weather))
+
+    filteredCountries.length !== 1 && setWeather(null)
+  }, [filteredCountries.length === 1])
 
   const toPlainText = (text) =>
     text
@@ -34,9 +46,12 @@ const App = () => {
 
   return (
     <>
-      <Filter handleFilter={handleFilter} />
+      {countries.length ? <Filter handleFilter={handleFilter} />: <div>Wait a moment</div>}
       {filteredCountries.length === 1 ? (
-        <Country country={filteredCountries[0]} />
+        <>
+          <Country country={filteredCountries[0]} />
+          {weather && <Weather countryName={filteredCountries[0].name.common} weather={weather} />}
+        </>
       ) : (
         <CountriesList countries={filteredCountries} />
       )}
